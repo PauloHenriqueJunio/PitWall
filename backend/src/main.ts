@@ -4,6 +4,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('PitWall API')
     .setDescription('Telemetria da F1 em tempo real')
@@ -14,5 +17,4 @@ async function bootstrap() {
 
   await app.listen(3000);
 }
-
 bootstrap();
