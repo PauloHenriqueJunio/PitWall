@@ -1,12 +1,12 @@
 import fastf1
 import requests
 
-API_URL = "https://localhost:3000/drivers";
+API_URL = "http://localhost:3000/drivers";
 
 fastf1.Cache.enable_cache('cache');
 
-print("Carregando dados da Bahrain 2024...");
-session = fastf1.get_session(2024, 'Bahrain', 'Q');
+print("Carregando dados da Bahrain 2025...");
+session = fastf1.get_session(2025, 'Bahrain', 'Q');
 session.load();
 
 drivers_numbers = session.drivers;
