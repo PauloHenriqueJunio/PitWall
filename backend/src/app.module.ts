@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DriverModule } from './driver/driver.module';
+import { LapsModule } from './laps/laps.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DriverModule } from './driver/driver.module';
       synchronize: true,
     }),
     DriverModule,
+    LapsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -17,7 +17,10 @@ export class DriverService {
   }
 
   async findAll() {
-    return await this.driverRepository.find();
+    return await this.driverRepository.find({
+      relations: ['laps'],
+    });
+
   }
 
   findOne(id: number) {
