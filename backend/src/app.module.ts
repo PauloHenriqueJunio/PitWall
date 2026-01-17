@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DriverModule } from './driver/driver.module';
 import { LapsModule } from './laps/laps.module';
+import { RacesModule } from './races/races.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LapsModule } from './laps/laps.module';
     }),
     DriverModule,
     LapsModule,
+    RacesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
