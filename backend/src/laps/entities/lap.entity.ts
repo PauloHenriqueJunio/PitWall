@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Driver } from '../../driver/entities/driver.entity';
+import { Race } from '../../races/entities/race.entity';
 
 @Entity()
 export class Lap {
@@ -26,4 +27,7 @@ export class Lap {
 
   @ManyToOne(() => Driver, (driver) => driver.laps, { onDelete: 'CASCADE' })
   driver: Driver;
+
+  @ManyToOne(() => Race, (race) => race.laps, { onDelete: 'CASCADE' })
+  race: Race;
 }
