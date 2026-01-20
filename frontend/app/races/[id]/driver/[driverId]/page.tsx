@@ -7,9 +7,11 @@ import { useParams } from "next/navigation";
 
 interface Lap {
   id: number;
+  lap_number: number;
   time: string;
   position: number;
   session_type: string;
+  race: { id: number };
 }
 
 interface Driver {
@@ -32,15 +34,17 @@ export default function DriverPage() {
   };
 
   useEffect(() => {
-    axios
-      .get<Driver>(`http://localhost:3000/drivers/${driverId}`)
-      .then((response) => setDriver(response.data))
-      .catch((error) => console.error("Erro ao buscar piloto", error));
+    axios.get<Driver[]>("http://localhost:3000/drivers").then((response) => {
+      const allDrivers = response.data;
+      const found = allDrivers.find(
+        (d: Driver) => Number(d.id) === Number(driverId)
+      );
+      setDriver(found || null);
+    });
   }, [driverId]);
-
-  const sessionLaps = (driver?.laps ?? []).filter(
-    (l) => l.session_type === activeTab
-  );
+  const sessionLaps = (driver?.laps ?? []).filter((l) => {
+    return l.session_type === activeTab && l.race && l.race.id === Number(id);
+  });
   const bestLap = [...sessionLaps].sort((a, b) =>
     a.time.localeCompare(b.time)
   )[0];
@@ -130,7 +134,7 @@ export default function DriverPage() {
                     key={lap.id}
                     className="flex justify-between bg-neutral-800 p-3 rounded"
                   >
-                    <span className="text-gray-400">Lap {lap.id}</span>
+                    <span className="text-gray-400">Lap {lap.lap_number}</span>
                     <span className="font-mono">{formatTime(lap.time)}</span>
                     <span className="text-gray-500">P{lap.position}</span>
                   </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { act, useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -43,37 +43,54 @@ export default function RacePage() {
   }, []);
 
   const getProcessedDrivers = () => {
-    return drivers
-      .map((driver) => {
-        const laps = driver.laps ?? [];
-        const sessionLaps = laps.filter(
-          (l) =>
-            l.session_type === activeTab &&
-            l.race &&
-            l.race.id === Number(params.id)
-        );
+    const processed = drivers.map((driver) => {
+      const laps = driver.laps ?? [];
+      const sessionLaps = laps.filter(
+        (l) =>
+          l.session_type === activeTab &&
+          l.race &&
+          l.race.id === Number(params.id)
+      );
 
-        const bestLap = [...sessionLaps].sort((a, b) =>
-          a.time.localeCompare(b.time)
-        )[0];
-        const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
-        const finalPosition = lastLap ? lastLap.position : 99;
+      const bestLap = [...sessionLaps].sort((a, b) =>
+        a.time.localeCompare(b.time)
+      )[0];
+      const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
+      const finalPosition = lastLap ? lastLap.position : 20;
 
-        return { ...driver, bestLap, finalPosition, sessionLaps } as Driver & {
-          bestLap?: Lap;
-          finalPosition: number;
-          sessionLaps: Lap[];
-        };
-      })
-      .filter((d) => d.sessionLaps.length > 0)
+      return { ...driver, bestLap, finalPosition, sessionLaps } as Driver & {
+        bestLap?: Lap;
+        finalPosition: number;
+        sessionLaps: Lap[];
+      };
+    });
+
+    const maxLaps = Math.max(...processed.map((d) => d.sessionLaps.length));
+    const dnfThreshold = Math.floor(maxLaps * 0.9);
+
+    return processed
       .sort((a, b) => {
         if (activeTab === "RACE") {
+          if (b.sessionLaps.length !== a.sessionLaps.length) {
+            return b.sessionLaps.length - a.sessionLaps.length;
+          }
           return a.finalPosition - b.finalPosition;
         } else {
           if (!a.bestLap) return +1;
           if (!b.bestLap) return -1;
           return a.bestLap.time.localeCompare(b.bestLap.time);
         }
+      })
+      .map((driver) => {
+        const lapsCount = driver.sessionLaps.length;
+        const isDNS = activeTab === "RACE" && lapsCount === 0;
+        const isDNF = activeTab === "RACE" && lapsCount > 0 && lapsCount < dnfThreshold;
+
+        return {
+          ...driver,
+          isDNS,
+          isDNF,
+        };
       });
   };
 
@@ -126,14 +143,34 @@ export default function RacePage() {
             href={`/races/${String(params.id)}/driver/${driver.id}`}
             className="group block"
           >
-            <div className="flex items-center bg-neutral-900 border-l-4 border-transparent hover:border-red-600 p-4 rounded transition-all cursor-pointer hover:bg-neutral-800">
-              <div className="w-16 text-center text-3xl font-black text-gray-600 group-hover:text-white italic">
+            <div
+              className={`flex items-center bg-neutral-900 border-l-4 border-transparent p-4 rounded transition-all cursor-pointer hover:bg-neutral-800 ${
+                driver.isDNS
+                  ? "bg-neutral-950 border-gray-800 opacity-40 hover:opacity-100"
+                  : driver.isDNF
+                  ? "bg-neutral-900 border-red-900 opacity-75"
+                  : "bg-neutral-900 border-transparent hover:border-red-600"
+              }`}
+            >
+              <div
+                className={`w-16 text-center text-3xl font-black text-gray-600 group-hover:text-white italic ${
+                  driver.isDNF
+                    ? "text-red-900"
+                    : "text-gray-600 group-hover:text-white"
+                }`}
+              >
                 {index + 1}
               </div>
 
               <div className="flex-1 pl-4 border-l border-gray-800">
                 <div className="flex items-baseline gap-3">
-                  <h2 className="text-xl font-bold text-white group-hover:text-red-500 transition-colors">
+                  <h2
+                    className={`text-xl font-bold text-white group-hover:text-red-500 transition-colors ${
+                      driver.isDNF
+                        ? "text-gray-500"
+                        : "text-white group-hover:text-red-500"
+                    }`}
+                  >
                     {driver.name}
                   </h2>
                   <span className="text-sm text-gray-500 font-mono">
@@ -151,9 +188,24 @@ export default function RacePage() {
                 </p>
                 <p className="text-xl font-mono font-bold text-white">
                   {activeTab === "RACE" ? (
-                    <span className="text-yellow-500">
-                      {driver.sessionLaps.length}
-                    </span>
+                    <>
+                      {driver.isDNS ? (
+                        <span className="text-gray-600">DNS</span>
+                      ) : (
+                        <span
+                          className={
+                            driver.isDNF ? "text-red-600" : "text-yellow-500"
+                          }
+                        >
+                          {driver.sessionLaps.length}
+                          {driver.isDNF && (
+                            <span className="text-xs ml-1 font-sans font-bold">
+                              (DNF)
+                            </span>
+                          )}
+                        </span>
+                      )}
+                    </>
                   ) : (
                     <span className="text-purple-400">
                       {formatTime(driver.bestLap?.time)}
