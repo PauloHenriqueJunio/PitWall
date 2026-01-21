@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface Lap {
   id: number;
@@ -37,7 +46,7 @@ export default function DriverPage() {
     axios.get<Driver[]>("http://localhost:3000/drivers").then((response) => {
       const allDrivers = response.data;
       const found = allDrivers.find(
-        (d: Driver) => Number(d.id) === Number(driverId)
+        (d: Driver) => Number(d.id) === Number(driverId),
       );
       setDriver(found || null);
     });
@@ -46,9 +55,35 @@ export default function DriverPage() {
     return l.session_type === activeTab && l.race && l.race.id === Number(id);
   });
   const bestLap = [...sessionLaps].sort((a, b) =>
-    a.time.localeCompare(b.time)
+    a.time.localeCompare(b.time),
   )[0];
   const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
+
+  const rawChartData = sessionLaps
+    .map((lap) => {
+      const parts = lap.time.split(":");
+      const hours = parseFloat(parts[0] || "0");
+      const minutes = parseFloat(parts[1] || "0");
+      const seconds = parseFloat(parts[2] || "0");
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+      return {
+        lap: lap.lap_number,
+        time: totalSeconds,
+        displayTime: formatTime(lap.time),
+      };
+    })
+    .sort((a, b) => a.lap - b.lap);
+
+  const times = rawChartData.map((d) => d.time);
+
+  const minTime = Math.min(...times);
+  const maxTime = Math.max(...times);
+  const timeDifference = maxTime - minTime;
+  const margin = Math.max(timeDifference * 0.1, 2);
+  const yMin = Math.floor(minTime - margin);
+  const yMax = Math.ceil(maxTime + margin);
+  const finalDomain = [yMin, yMax === yMin ? yMax + 5 : yMax];
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white p-10 font-sans">
@@ -95,6 +130,63 @@ export default function DriverPage() {
               </button>
             </div>
           </header>
+
+          {rawChartData.length > 0 && (
+            <div className="max-w-4xl mx-auto bg-neutral-900 rounded-xl p-6 border border-gray-800 mb-8 shadow-2xl">
+              <h3 className="text-gray-400 text-xs uppercase font-bold tracking-wider mb-4">
+                Telemetry Analysis (Lap Time Evolution)
+              </h3>
+              <div className="h-75 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={rawChartData}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#333"
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="lap"
+                      stroke="#666"
+                      tick={{ fill: "#666", fontSize: 12 }}
+                      tickLine={false}
+                      axisLine={false}
+                      minTickGap={20}
+                    />
+                    <YAxis
+                      type="number"
+                      domain={finalDomain}
+                      width={60}
+                      stroke="#666"
+                      tick={{ fill: "#666", fontSize: 12 }}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#0a0a0a",
+                        borderColor: "#333",
+                        borderRadius: "8px",
+                      }}
+                      itemStyle={{ color: "#fff", fontWeight: "bold" }}
+                      formatter={(value, name, props) => [
+                        props.payload.displayTime,
+                        "Tempo",
+                      ]}
+                      labelFormatter={(label) => `Volta ${label}`}
+                      cursor={{ stroke: "#666", strokeWidth: 1 }}
+                    ></Tooltip>
+                    <Line
+                      type="linear"
+                      dataKey="time"
+                      stroke="#dc2626"
+                      strokeWidth={3}
+                      dot={false}
+                      activeDot={{ r: 6, fill: "#fff", stroke: "#dc2626" }}
+                      isAnimationActive={true}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
 
           <section className="max-w-4xl mx-auto bg-neutral-900 rounded p-6 border border-gray-800">
             <div className="flex justify-between items-center mb-4">

@@ -170,9 +170,10 @@ export default function RacePage() {
                     : "bg-neutral-900 border-transparent hover:border-red-800"
               }`}
               style={{
-                borderLeftColor: !driver.isDNS && !driver.isDNF
-                ? getTeamColor(driver.team)
-                : undefined
+                borderLeftColor:
+                  !driver.isDNS && !driver.isDNF
+                    ? getTeamColor(driver.team)
+                    : undefined,
               }}
             >
               <div
@@ -200,8 +201,14 @@ export default function RacePage() {
                     #{driver.number}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1"
-                style={{ color: !driver.isDNS && !driver.isDNF ? getTeamColor(driver.team) :'#9ca3af'}}
+                <p
+                  className="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1"
+                  style={{
+                    color:
+                      !driver.isDNS && !driver.isDNF
+                        ? getTeamColor(driver.team)
+                        : "#9ca3af",
+                  }}
                 >
                   {driver.team}
                 </p>
