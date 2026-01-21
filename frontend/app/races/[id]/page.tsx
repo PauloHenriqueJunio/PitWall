@@ -5,6 +5,23 @@ import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+const TEAM_COLORS: Record<string, string> = {
+  "Red Bull Racing": "#3671C6",
+  Mercedes: "#27F4D2",
+  Ferrari: "#E80020",
+  McLaren: "#FF8000",
+  "Aston Martin": "#229971",
+  Alpine: "#00A1E8",
+  Williams: "#1868DB",
+  "Racing Bulls": "#6692FF",
+  "Kick Sauber": "#52E252",
+  "Haas F1 Team": "#B6BABD",
+};
+
+const getTeamColor = (teamName: string) => {
+  return TEAM_COLORS[teamName] || "#FFFFFF";
+};
+
 interface Driver {
   id: number;
   name: string;
@@ -49,11 +66,11 @@ export default function RacePage() {
         (l) =>
           l.session_type === activeTab &&
           l.race &&
-          l.race.id === Number(params.id)
+          l.race.id === Number(params.id),
       );
 
       const bestLap = [...sessionLaps].sort((a, b) =>
-        a.time.localeCompare(b.time)
+        a.time.localeCompare(b.time),
       )[0];
       const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
       const finalPosition = lastLap ? lastLap.position : 20;
@@ -84,7 +101,8 @@ export default function RacePage() {
       .map((driver) => {
         const lapsCount = driver.sessionLaps.length;
         const isDNS = activeTab === "RACE" && lapsCount === 0;
-        const isDNF = activeTab === "RACE" && lapsCount > 0 && lapsCount < dnfThreshold;
+        const isDNF =
+          activeTab === "RACE" && lapsCount > 0 && lapsCount < dnfThreshold;
 
         return {
           ...driver,
@@ -148,9 +166,14 @@ export default function RacePage() {
                 driver.isDNS
                   ? "bg-neutral-950 border-gray-800 opacity-40 hover:opacity-100"
                   : driver.isDNF
-                  ? "bg-neutral-900 border-red-900 opacity-75"
-                  : "bg-neutral-900 border-transparent hover:border-red-600"
+                    ? "bg-neutral-900 border-red-900 opacity-75"
+                    : "bg-neutral-900 border-transparent hover:border-red-800"
               }`}
+              style={{
+                borderLeftColor: !driver.isDNS && !driver.isDNF
+                ? getTeamColor(driver.team)
+                : undefined
+              }}
             >
               <div
                 className={`w-16 text-center text-3xl font-black text-gray-600 group-hover:text-white italic ${
@@ -177,7 +200,9 @@ export default function RacePage() {
                     #{driver.number}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 uppercase font-bold tracking-wider">
+                <p className="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1"
+                style={{ color: !driver.isDNS && !driver.isDNF ? getTeamColor(driver.team) :'#9ca3af'}}
+                >
                   {driver.team}
                 </p>
               </div>
