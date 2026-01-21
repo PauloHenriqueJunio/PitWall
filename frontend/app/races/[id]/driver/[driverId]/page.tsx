@@ -136,7 +136,7 @@ export default function DriverPage() {
               <h3 className="text-gray-400 text-xs uppercase font-bold tracking-wider mb-4">
                 Telemetry Analysis (Lap Time Evolution)
               </h3>
-              <div className="h-75 w-full">
+              <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={rawChartData}>
                     <CartesianGrid
