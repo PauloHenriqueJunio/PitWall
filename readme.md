@@ -16,16 +16,16 @@ Aplicação full‑stack para visualizar e explorar telemetria de Fórmula 1. O 
 
 ```
 PitWall/
-├─ backend/             # NestJS + TypeORM + Swagger
+├─ backend/
 │  ├─ src/
-│  │  ├─ driver/        # Módulo de pilotos (CRUD)
-│  │  └─ main.ts        # Boot da API e Swagger
-│  ├─ test/             # Testes e2e (Jest)
-│  └─ package.json      # Scripts de execução/testes
-├─ frontend/            # Next.js App Router
-│  ├─ app/              # Páginas e estilos
-│  └─ package.json      # Scripts de execução/build
-└─ telemetry/           # Cache de dados F1 por evento/sessão
+│  │  ├─ driver/
+│  │  └─ main.ts
+│  ├─ test/
+│  └─ package.json
+├─ frontend/
+│  ├─ app/
+│  └─ package.json
+└─ telemetry/
 ```
 
 ## Pré‑requisitos
