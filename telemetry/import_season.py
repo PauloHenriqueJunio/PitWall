@@ -3,6 +3,7 @@ import requests;
 import pandas as pd;
 import warnings;
 import time;
+import os;
 from concurrent.futures import ThreadPoolExecutor, as_completed;
 from threading import Lock;
 
@@ -62,10 +63,8 @@ def import_session(race_db, session_type, driver_map):
         driver_number = str(lap['DriverNumber']);
 
         if driver_number in driver_map:
-            if pd.isna(lap['LapTime']): 
-                continue;
 
-            lap_time_str = str(lap['LapTime']).split(' ')[-1];
+            lap_time_str = "00:00.000" if pd.isna(lap['LapTime']) else str(lap['LapTime']).split(' ')[-1];
 
             payload = {
                 "lap_number": int(lap['LapNumber']),
@@ -113,7 +112,12 @@ print(f"{len(db_races)} corridas encontradas.")
 
 print("\n Iniciando importação das sessões, pode demorar um pouco.\n");
 
+filter_race_id = os.getenv('RACE_ID')
+
 for i, race in enumerate(db_races):
+    if filter_race_id and str(race['id']) != str(filter_race_id):
+        continue
+
     print(f"\n[{i+1}/{len(db_races)}] Processando: {race['name']}")
     import_session(race, 'QUALY', driver_map)
     import_session(race, 'RACE', driver_map)

@@ -110,10 +110,10 @@ export default function RacePage() {
     return processed
       .sort((a, b) => {
         if (activeTab === "RACE") {
-          if (b.sessionLaps.length !== a.sessionLaps.length) {
-            return b.sessionLaps.length - a.sessionLaps.length;
+          if (a.finalPosition !== b.finalPosition) {
+            return a.finalPosition - b.finalPosition;
           }
-          return a.finalPosition - b.finalPosition;
+          return b.sessionLaps.length - a.sessionLaps.length;
         } else {
           if (!a.bestLap) return +1;
           if (!b.bestLap) return -1;

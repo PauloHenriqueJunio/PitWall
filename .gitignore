@@ -3,6 +3,8 @@ limpar_voltas.js
 limpar_tudo.js
 limpar_races_antigas.js
 verificar_banco.js
+check_laps_race.js
+limpar_voltas_race.js
 
 node_modules/
 
