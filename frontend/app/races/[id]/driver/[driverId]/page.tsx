@@ -43,12 +43,31 @@ export default function DriverPage() {
   const formatTime = (time?: string) => {
     if (!time) return "No Time";
     const isZero =
-      time.startsWith("00:00") ||
-      time.startsWith("0:00") ||
-      time.startsWith("00.000") ||
-      time.startsWith("0.000");
+      time === "00:00:00.000" ||
+      time.startsWith("00:00:00") ||
+      time === "0:00.000";
     if (isZero) return "--";
-    return time.replace("00:", "").substring(0, 10);
+    return time.replace(/^00:/, "").substring(0, 10);
+  };
+
+  const parseLapTimeToSeconds = (timeStr: string) => {
+    if (!timeStr) return 0;
+
+    const parts = timeStr.split(":");
+
+    if (parts.length === 3) {
+      const minutes = parseFloat(parts[1]);
+      const seconds = parseFloat(parts[2]);
+      return minutes * 60 + seconds;
+    }
+
+    if (parts.length === 2) {
+      const minutes = parseFloat(parts[0]);
+      const seconds = parseFloat(parts[1]);
+      return minutes * 60 + seconds;
+    }
+
+    return 0;
   };
 
   useEffect(() => {
@@ -60,53 +79,42 @@ export default function DriverPage() {
       setDriver(found || null);
     });
   }, [driverId]);
+
   const sessionLapsRaw = (driver?.laps ?? []).filter((l: Lap) => {
     if (l.session_type !== activeTab) return false;
-
     const lapRaceId =
       (typeof l.race === "number" ? l.race : l.race?.id) || l.raceId;
-
     return String(lapRaceId) === String(id);
   });
 
-  const sessionLaps = sessionLapsRaw;
+  const sessionLaps = sessionLapsRaw.filter((l) => {
+    const isInvalid =
+      !l.time ||
+      l.time === "00:00:00.000" ||
+      l.time.startsWith("00:00:00") ||
+      l.time === "0:00.000" ||
+      l.time.startsWith("0:");
+
+    return !isInvalid;
+  });
+
   const orderedLaps = [...sessionLaps].sort(
     (a, b) => a.lap_number - b.lap_number,
   );
 
-  const validForBest = orderedLaps.filter((l) => {
-    const zeroTime =
-      !l.time ||
-      l.time.startsWith("00:") ||
-      l.time.startsWith("0:") ||
-      l.time.startsWith("00.000") ||
-      l.time.startsWith("0.000");
-    return !zeroTime;
-  });
-  const bestLap = [...validForBest].sort((a, b) =>
+  const bestLap = [...orderedLaps].sort((a, b) =>
     a.time.localeCompare(b.time),
   )[0];
+
   const lastLap = [...orderedLaps].sort(
     (a, b) => b.lap_number - a.lap_number,
   )[0];
 
-  const rawChartData = sessionLaps
-    .filter(
-      (lap) =>
-        lap.time !== "00:00:00.000" &&
-        !lap.time.startsWith("00:") &&
-        !lap.time.startsWith("0:"),
-    )
+  const rawChartData = orderedLaps
     .map((lap) => {
-      const parts = lap.time.split(":");
-      const hours = parseFloat(parts[0] || "0");
-      const minutes = parseFloat(parts[1] || "0");
-      const seconds = parseFloat(parts[2] || "0");
-      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-
       return {
         lap: lap.lap_number,
-        time: totalSeconds,
+        time: parseLapTimeToSeconds(lap.time),
         displayTime: formatTime(lap.time),
       };
     })
@@ -188,6 +196,8 @@ export default function DriverPage() {
                       tickLine={false}
                       axisLine={false}
                       minTickGap={20}
+                      type="number"
+                      domain={["auto", "auto"]}
                     />
                     <YAxis
                       type="number"
@@ -211,13 +221,14 @@ export default function DriverPage() {
                       cursor={{ stroke: "#666", strokeWidth: 1 }}
                     ></Tooltip>
                     <Line
-                      type="linear"
+                      type="monotone"
                       dataKey="time"
                       stroke="#dc2626"
                       strokeWidth={3}
                       dot={false}
                       activeDot={{ r: 6, fill: "#fff", stroke: "#dc2626" }}
                       isAnimationActive={true}
+                      connectNulls={true}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -269,7 +280,9 @@ export default function DriverPage() {
                   </div>
                 ))}
                 {sessionLaps.length === 0 && (
-                  <p className="text-gray-500">Sem voltas para esta sessão.</p>
+                  <p className="text-gray-500">
+                    Sem voltas válidas para esta sessão.
+                  </p>
                 )}
               </div>
             </div>
