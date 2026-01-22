@@ -5,6 +5,9 @@ limpar_races_antigas.js
 verificar_banco.js
 check_laps_race.js
 limpar_voltas_race.js
+check_lap_driver_race.js
+check_sessions_summary.js
+debug_qualy.js
 
 node_modules/
 

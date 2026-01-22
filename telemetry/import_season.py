@@ -63,8 +63,10 @@ def import_session(race_db, session_type, driver_map):
         driver_number = str(lap['DriverNumber']);
 
         if driver_number in driver_map:
+            if pd.isna(lap['LapTime']):
+                continue
 
-            lap_time_str = "00:00.000" if pd.isna(lap['LapTime']) else str(lap['LapTime']).split(' ')[-1];
+            lap_time_str = str(lap['LapTime']).split(' ')[-1];
 
             payload = {
                 "lap_number": int(lap['LapNumber']),
@@ -77,7 +79,6 @@ def import_session(race_db, session_type, driver_map):
             
             payloads.append((payload, int(lap['LapNumber']), driver_number))
     
-    # Envia voltas em paralelo
     count_success = 0
     count_failed = 0
     
@@ -88,7 +89,7 @@ def import_session(race_db, session_type, driver_map):
             success, lap_num, driver_num = future.result()
             if success:
                 count_success += 1
-                if count_success % 50 == 0:  # Mostra progresso a cada 50 voltas
+                if count_success % 50 == 0:  
                     with print_lock:
                         print(f"   ✓ {count_success}/{len(payloads)} voltas enviadas...")
             else:

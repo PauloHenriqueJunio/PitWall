@@ -41,6 +41,12 @@ export default function DriverPage() {
 
   const formatTime = (time?: string) => {
     if (!time) return "No Time";
+    const isZero =
+      time.startsWith("00:00") ||
+      time.startsWith("0:00") ||
+      time.startsWith("00.000") ||
+      time.startsWith("0.000");
+    if (isZero) return "--";
     return time.replace("00:", "").substring(0, 10);
   };
 
@@ -65,7 +71,6 @@ export default function DriverPage() {
       l.time.startsWith("00.000") ||
       l.time.startsWith("0.000");
     const zeroPos = !l.position || Number(l.position) === 0;
-
 
     if (activeTab === "QUALY" && (zeroTime || zeroPos)) return false;
     return true;
