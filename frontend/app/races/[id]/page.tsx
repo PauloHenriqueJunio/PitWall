@@ -95,7 +95,8 @@ export default function RacePage() {
         a.time.localeCompare(b.time),
       )[0];
       const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
-      const finalPosition = lastLap ? lastLap.position : 20;
+      const finalPosition =
+        lastLap && lastLap.position > 0 ? lastLap.position : 999;
 
       return { ...driver, bestLap, finalPosition, sessionLaps } as Driver & {
         bestLap?: Lap;
@@ -149,9 +150,7 @@ export default function RacePage() {
         <h1 className="text-4xl font-bold text-white mb-2">
           {race?.name || "Grand Prix Details"}
         </h1>
-        <p className="text-red-500 font-mono">
-          ROUND {race?.round || "..."}
-        </p>
+        <p className="text-red-500 font-mono">ROUND {race?.round || "..."}</p>
         <div className="mt-8 flex justify-center gap-4">
           <button
             onClick={() => setActiveTab("RACE")}
