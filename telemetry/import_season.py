@@ -66,9 +66,9 @@ def import_session(race_db, session_type, driver_map):
             continue
 
         if pd.isna(lap['LapTime']):
-            continue
-
-        lap_time_str = str(lap['LapTime']).split(' ')[-1];
+            lap_time_str = "00:00:00.000"
+        else:
+            lap_time_str = str(lap['LapTime']).split(' ')[-1];
 
         payload = {
             "lap_number": int(lap['LapNumber']),
