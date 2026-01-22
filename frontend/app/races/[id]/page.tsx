@@ -40,9 +40,18 @@ interface Lap {
   race: { id: number };
 }
 
+interface Race {
+  id: number;
+  name: string;
+  round: number;
+  date: string;
+  year: number;
+}
+
 export default function RacePage() {
   const params = useParams();
   const [drivers, setDrivers] = useState<Driver[]>([]);
+  const [race, setRace] = useState<Race | null>(null);
   const [activeTab, setActiveTab] = useState<"RACE" | "QUALY">("RACE");
   const formatTime = (time: string | undefined) => {
     if (!time) return "No Time";
@@ -50,6 +59,18 @@ export default function RacePage() {
   };
 
   useEffect(() => {
+    axios
+      .get<Race[]>(`${API_URL}/races`)
+      .then((response) => {
+        const currentRace = response.data.find(
+          (r) => r.id === Number(params.id),
+        );
+        setRace(currentRace || null);
+      })
+      .catch((error) => {
+        console.error("Erro ao buscar corrida", error);
+      });
+
     axios
       .get<Driver[]>(`${API_URL}/drivers`)
       .then((response) => {
@@ -126,9 +147,11 @@ export default function RacePage() {
 
       <header className="mb-12 text-center">
         <h1 className="text-4xl font-bold text-white mb-2">
-          Grand Prix Details
+          {race?.name || "Grand Prix Details"}
         </h1>
-        <p className="text-red-500 font-mono">ROUND {String(params.id)}</p>
+        <p className="text-red-500 font-mono">
+          ROUND {race?.round || "..."}
+        </p>
         <div className="mt-8 flex justify-center gap-4">
           <button
             onClick={() => setActiveTab("RACE")}

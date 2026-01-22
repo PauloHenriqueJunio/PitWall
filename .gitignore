@@ -1,6 +1,8 @@
 check_races.js
 limpar_voltas.js
 limpar_tudo.js
+limpar_races_antigas.js
+verificar_banco.js
 
 node_modules/
 
