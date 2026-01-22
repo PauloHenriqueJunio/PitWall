@@ -59,7 +59,7 @@ export default function DriverPage() {
 
   const sessionLaps = sessionLapsRaw.filter((l) => {
     const noTime =
-      !l.time || l.time.startsWith("00:00") || l.time.startsWith("0:00");
+      !l.time || l.time.startsWith("00.000") || l.time.startsWith("00.000");
     const noPos = !l.position || Number(l.position) === 0;
     if (noTime || noPos) return false;
     return true;
