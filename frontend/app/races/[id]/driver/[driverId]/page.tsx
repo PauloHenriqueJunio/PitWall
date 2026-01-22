@@ -70,9 +70,10 @@ export default function DriverPage() {
       l.time.startsWith("0:") ||
       l.time.startsWith("00.000") ||
       l.time.startsWith("0.000");
-    const zeroPos = !l.position || Number(l.position) === 0;
 
-    if (activeTab === "QUALY" && (zeroTime || zeroPos)) return false;
+    // Em QUALY, filtra zero time. Em RACE, mantém tudo que tem tempo válido
+    if (activeTab === "QUALY" && zeroTime) return false;
+    if (activeTab === "RACE" && zeroTime) return false;
     return true;
   });
   const orderedLaps = [...sessionLaps].sort(

@@ -62,22 +62,24 @@ def import_session(race_db, session_type, driver_map):
     for index, lap in laps.iterlaps():
         driver_number = str(lap['DriverNumber']);
 
-        if driver_number in driver_map:
-            if pd.isna(lap['LapTime']):
-                continue
+        if driver_number not in driver_map:
+            continue
 
-            lap_time_str = str(lap['LapTime']).split(' ')[-1];
+        if pd.isna(lap['LapTime']):
+            continue
 
-            payload = {
-                "lap_number": int(lap['LapNumber']),
-                "position": int(lap['Position']) if not pd.isna(lap['Position']) else 0,
-                "time": lap_time_str,
-                "session_type": session_type,
-                "driver": {"id": driver_map[driver_number]},
-                "race": {"id": race_db['id']}
-            };
+        lap_time_str = str(lap['LapTime']).split(' ')[-1];
+
+        payload = {
+            "lap_number": int(lap['LapNumber']),
+            "position": int(lap['Position']) if not pd.isna(lap['Position']) else 0,
+            "time": lap_time_str,
+            "session_type": session_type,
+            "driver": {"id": driver_map[driver_number]},
+            "race": {"id": race_db['id']}
+        };
             
-            payloads.append((payload, int(lap['LapNumber']), driver_number))
+        payloads.append((payload, int(lap['LapNumber']), driver_number))
     
     count_success = 0
     count_failed = 0
