@@ -12,12 +12,14 @@ interface Race {
   date: string;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 export default function HomePage() {
   const [races, setRaces] = useState<Race[]>([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/races")
+      .get(`${API_URL}/races`)
       .then((response) => setRaces(response.data))
       .catch((error) => console.error("Error fetching races:", error));
   }, []);

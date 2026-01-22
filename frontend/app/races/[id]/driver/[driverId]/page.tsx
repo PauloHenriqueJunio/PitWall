@@ -32,6 +32,8 @@ interface Driver {
   laps: Lap[];
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 export default function DriverPage() {
   const { id, driverId } = useParams();
   const [driver, setDriver] = useState<Driver | null>(null);
@@ -43,7 +45,7 @@ export default function DriverPage() {
   };
 
   useEffect(() => {
-    axios.get<Driver[]>("http://localhost:3000/drivers").then((response) => {
+    axios.get<Driver[]>(`${API_URL}/drivers`).then((response) => {
       const allDrivers = response.data;
       const found = allDrivers.find(
         (d: Driver) => Number(d.id) === Number(driverId),

@@ -21,6 +21,7 @@ const TEAM_COLORS: Record<string, string> = {
 const getTeamColor = (teamName: string) => {
   return TEAM_COLORS[teamName] || "#FFFFFF";
 };
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 interface Driver {
   id: number;
@@ -50,7 +51,7 @@ export default function RacePage() {
 
   useEffect(() => {
     axios
-      .get<Driver[]>("http://localhost:3000/drivers")
+      .get<Driver[]>(`${API_URL}/drivers`)
       .then((response) => {
         setDrivers(response.data);
       })
