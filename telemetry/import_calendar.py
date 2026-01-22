@@ -9,6 +9,10 @@ schedule = fastf1.get_event_schedule(YEAR);
 
 count = 0 
 for i, row in schedule.iterrows():
+    if row['EventFormat'] == 'testing' or int(row['RoundNumber']) <= 0:
+        print(f"Ignorando: {row['EventName']} (Round {row['RoundNumber']})")
+        continue
+    
     try:
         payload = {
             "name": row['EventName'],
