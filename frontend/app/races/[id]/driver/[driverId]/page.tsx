@@ -65,10 +65,14 @@ export default function DriverPage() {
     }
     return true;
   });
-  const bestLap = [...sessionLaps].sort((a, b) =>
+  const orderedLaps = [...sessionLaps].sort(
+    (a, b) => a.lap_number - b.lap_number,
+  );
+
+  const bestLap = [...orderedLaps].sort((a, b) =>
     a.time.localeCompare(b.time),
   )[0];
-  const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
+  const lastLap = [...orderedLaps].sort((a, b) => b.lap_number - a.lap_number)[0];
 
   const rawChartData = sessionLaps
     .map((lap) => {
@@ -232,7 +236,7 @@ export default function DriverPage() {
                 LAPS
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {sessionLaps.map((lap) => (
+                {orderedLaps.map((lap) => (
                   <div
                     key={lap.id}
                     className="flex justify-between bg-neutral-800 p-3 rounded"
