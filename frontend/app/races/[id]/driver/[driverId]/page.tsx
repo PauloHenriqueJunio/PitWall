@@ -53,8 +53,17 @@ export default function DriverPage() {
       setDriver(found || null);
     });
   }, [driverId]);
-  const sessionLaps = (driver?.laps ?? []).filter((l) => {
+  const sessionLapsRaw = (driver?.laps ?? []).filter((l) => {
     return l.session_type === activeTab && l.race && l.race.id === Number(id);
+  });
+
+  const sessionLaps = sessionLapsRaw.filter((l) => {
+    if (activeTab === "QUALY") {
+      const noTime = !l.time || l.time.startsWith("00:00.000") || l.time.startsWith("0:00.000");
+      const noPos = !l.position || Number(l.position) === 0;
+      if (noTime || noPos) return false;
+    }
+    return true;
   });
   const bestLap = [...sessionLaps].sort((a, b) =>
     a.time.localeCompare(b.time),
