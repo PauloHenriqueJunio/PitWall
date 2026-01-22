@@ -1,43 +1,70 @@
 import fastf1
 import requests
 
-API_URL = "http://localhost:3000/drivers";
+API_URL = "http://localhost:3000/drivers"
+fastf1.Cache.enable_cache('cache')
 
-fastf1.Cache.enable_cache('cache');
+DRIVER_COUNTRIES = {
+    1: "NED",
+    2: "USA",
+    4: "GBR",
+    10: "FRA",
+    11: "MEX",
+    14: "ESP",
+    16: "MON",
+    18: "CAN",
+    20: "CHN",
+    22: "JPN",
+    23: "THA",
+    24: "CHN",
+    27: "AUS",
+    31: "FRA",
+    38: "AUS",
+    43: "ARG",
+    44: "GBR",
+    55: "ESP",
+    63: "GBR",
+    81: "AUS",
+    87: "ITA",
+}
 
-print("Carregando dados da Bahrain 2025...");
-session = fastf1.get_session(2025, 'Bahrain', 'Q');
-session.load();
-
-drivers_numbers = session.drivers;
+all_drivers = {}
 
 
-print(f'Encontrados {len(drivers_numbers)} pilotos. Importando...');
+races = ['Bahrain', 'Saudi Arabia', 'Las Vegas', 'Abu Dhabi']
 
-for numbers in drivers_numbers:
-    d = session.get_driver(numbers);
-    
-    payload = {
-        "name": d['FullName'],
-        "team": d['TeamName'],
-        "number": int(d['DriverNumber']),
-        "country": d['CountryCode']
-    }
-
+for race in races:
     try:
-        response = requests.post(API_URL, json=payload);
+        print(f'Carregando pilotos de {race}...')
+        session = fastf1.get_session(2025, race, 'Q')
+        session.load()
+        
+        for number in session.drivers:
+            d = session.get_driver(number)
+            driver_num = int(d["DriverNumber"])
 
-        if response.status_code == 201:
-            print(f'Piloto {d['Abbreviation']} importado com sucesso!');
-        else:
-            print(f'Erro ao importar piloto {d['Abbreviation']}: {response.text}');
-
+            if driver_num not in all_drivers:
+                all_drivers[driver_num] = {
+                    "name": d["FullName"],
+                    "team": d["TeamName"],
+                    "number": driver_num,
+                    "country": DRIVER_COUNTRIES.get(driver_num, "UNK"),
+                    "abbr": d["Abbreviation"],
+                }
     except Exception as e:
-        print(f"Erro de conexão!");
+        print(f'Erro ao carregar {race}: {e}')
 
-print("\nImportação finalizada!");
+print(f'\nEncontrados {len(all_drivers)} pilotos únicos. Importando...')
 
+for payload in all_drivers.values():
+    abbr = payload.pop('abbr')
+    try:
+        response = requests.post(API_URL, json=payload)
+        if response.status_code == 201:
+            print(f'Piloto {abbr} importado com sucesso!')
+        else:
+            print(f'Erro ao importar piloto {abbr}: {response.text}')
+    except Exception as e:
+        print(f'Erro de conexão: {e}')
 
-    
-
-
+print("\nImportação finalizada!")

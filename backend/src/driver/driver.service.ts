@@ -18,9 +18,8 @@ export class DriverService {
 
   async findAll() {
     return await this.driverRepository.find({
-      relations: ['laps'],
+      relations: ['laps', 'laps.race'],
     });
-
   }
 
   findOne(id: number) {

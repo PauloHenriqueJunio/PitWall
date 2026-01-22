@@ -13,6 +13,9 @@ export class Lap {
   @Column()
   position: number;
 
+  @Column({ nullable: true })
+  session_type: string;
+
   @Column()
   time: string;
 
