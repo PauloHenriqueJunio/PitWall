@@ -58,14 +58,10 @@ export default function DriverPage() {
   });
 
   const sessionLaps = sessionLapsRaw.filter((l) => {
-    if (activeTab === "QUALY") {
-      const noTime =
-        !l.time ||
-        l.time.startsWith("00:00.000") ||
-        l.time.startsWith("0:00.000");
-      const noPos = !l.position || Number(l.position) === 0;
-      if (noTime || noPos) return false;
-    }
+    const noTime =
+      !l.time || l.time.startsWith("00:00") || l.time.startsWith("0:00");
+    const noPos = !l.position || Number(l.position) === 0;
+    if (noTime || noPos) return false;
     return true;
   });
   const orderedLaps = [...sessionLaps].sort(
