@@ -8,15 +8,13 @@ import {
   Delete,
 } from '@nestjs/common';
 import { DriverService } from './driver.service';
-import { CreateDriverDto } from './dto/create-driver.dto';
-import { UpdateDriverDto } from './dto/update-driver.dto';
 
 @Controller('drivers')
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
 
   @Post()
-  create(@Body() createDriverDto: CreateDriverDto) {
+  create(@Body() createDriverDto: any) {
     return this.driverService.create(createDriverDto);
   }
 
@@ -31,7 +29,7 @@ export class DriverController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDriverDto: UpdateDriverDto) {
+  update(@Param('id') id: string, @Body() updateDriverDto: any) {
     return this.driverService.update(+id, updateDriverDto);
   }
 

@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Lap } from '../../laps/entities/lap.entity';
+
 @Entity()
 export class Driver {
   @PrimaryGeneratedColumn()
@@ -15,4 +17,7 @@ export class Driver {
 
   @Column({ nullable: true })
   country: string;
+
+  @OneToMany(() => Lap, (lap) => lap.driver)
+  laps: Lap[];
 }
