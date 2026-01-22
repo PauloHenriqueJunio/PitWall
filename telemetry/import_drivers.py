@@ -1,7 +1,7 @@
 import fastf1
 import requests
 
-API_URL = "http://localhost:3000/drivers"
+API_URL = "https://pitwall-production.up.railway.app/drivers"
 fastf1.Cache.enable_cache('cache')
 
 DRIVER_COUNTRIES = {

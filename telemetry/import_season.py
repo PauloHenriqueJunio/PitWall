@@ -2,9 +2,10 @@ import fastf1;
 import requests;
 import pandas as pd;
 import warnings;
+import time;
 
 
-API_URL = "http://localhost:3000";
+API_URL = "https://pitwall-production.up.railway.app";
 DATA_YEAR = 2025;
 fastf1.Cache.enable_cache('cache');
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -46,15 +47,31 @@ def import_session(race_db, session_type, driver_map):
                     "position": int(lap['Position']) if not pd.isna(lap['Position']) else 0,
                     "time": lap_time_str,
                     "session_type": session_type,
-                    "driver": {"id": driver_map[driver_number]}, # Vincula ao ID do Piloto
+                    "driver": {"id": driver_map[driver_number]},
                     "race": {"id": race_db['id']}
             };
 
-            try:
-                requests.post(f"{API_URL}/laps", json=payload);
-                count += 1;
-            except Exception as e:
-                print(f"Erro ao salvar volta: {e}");
+            sucess = False
+            tentativas = 0
+            while not sucess and tentativas < 3:
+                try:
+                    time.sleep(0.2)
+                    
+                    resp = requests.post(f"{API_URL}/laps", json=payload)
+                    
+                    
+                    if resp.status_code in [200, 201]:
+                        count += 1
+                        sucess = True
+                        print(f"[Volta {int(lap['LapNumber'])}] Salva! Volta do piloto: {lap['DriverNumber']} (Total importado: {count})", flush=True)
+                    else:
+                        tentativas += 1
+                        time.sleep(2) 
+
+                except Exception as e:
+                    tentativas += 1
+                    print(f"\nConexão caiu. Tentando de novo ({tentativas}/3)...")
+                    time.sleep(5)
         
     print(f"Sucesso {count} voltas importadas");
 
