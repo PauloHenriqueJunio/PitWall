@@ -20,7 +20,8 @@ interface Lap {
   time: string;
   position: number;
   session_type: string;
-  race: { id: number };
+  race?: { id: number } | number;
+  raceId?: number;
 }
 
 interface Driver {
@@ -59,23 +60,16 @@ export default function DriverPage() {
       setDriver(found || null);
     });
   }, [driverId]);
-  const sessionLapsRaw = (driver?.laps ?? []).filter((l) => {
-    return l.session_type === activeTab && l.race && l.race.id === Number(id);
+  const sessionLapsRaw = (driver?.laps ?? []).filter((l: Lap) => {
+    if (l.session_type !== activeTab) return false;
+
+    const lapRaceId =
+      (typeof l.race === "number" ? l.race : l.race?.id) || l.raceId;
+
+    return String(lapRaceId) === String(id);
   });
 
-  const sessionLaps = sessionLapsRaw.filter((l) => {
-    const zeroTime =
-      !l.time ||
-      l.time.startsWith("00:") ||
-      l.time.startsWith("0:") ||
-      l.time.startsWith("00.000") ||
-      l.time.startsWith("0.000");
-
-    // Em QUALY, filtra zero time. Em RACE, mantém tudo que tem tempo válido
-    if (activeTab === "QUALY" && zeroTime) return false;
-    if (activeTab === "RACE" && zeroTime) return false;
-    return true;
-  });
+  const sessionLaps = sessionLapsRaw;
   const orderedLaps = [...sessionLaps].sort(
     (a, b) => a.lap_number - b.lap_number,
   );
@@ -97,6 +91,12 @@ export default function DriverPage() {
   )[0];
 
   const rawChartData = sessionLaps
+    .filter(
+      (lap) =>
+        lap.time !== "00:00:00.000" &&
+        !lap.time.startsWith("00:") &&
+        !lap.time.startsWith("0:"),
+    )
     .map((lap) => {
       const parts = lap.time.split(":");
       const hours = parseFloat(parts[0] || "0");
