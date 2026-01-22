@@ -58,17 +58,32 @@ export default function DriverPage() {
   });
 
   const sessionLaps = sessionLapsRaw.filter((l) => {
-    const noTime =
-      !l.time || l.time.startsWith("00.000") || l.time.startsWith("00.000");
-    const noPos = !l.position || Number(l.position) === 0;
-    if (noTime || noPos) return false;
+    const zeroTime =
+      !l.time ||
+      l.time.startsWith("00:") ||
+      l.time.startsWith("0:") ||
+      l.time.startsWith("00.000") ||
+      l.time.startsWith("0.000");
+    const zeroPos = !l.position || Number(l.position) === 0;
+
+
+    if (activeTab === "QUALY" && (zeroTime || zeroPos)) return false;
     return true;
   });
   const orderedLaps = [...sessionLaps].sort(
     (a, b) => a.lap_number - b.lap_number,
   );
 
-  const bestLap = [...orderedLaps].sort((a, b) =>
+  const validForBest = orderedLaps.filter((l) => {
+    const zeroTime =
+      !l.time ||
+      l.time.startsWith("00:") ||
+      l.time.startsWith("0:") ||
+      l.time.startsWith("00.000") ||
+      l.time.startsWith("0.000");
+    return !zeroTime;
+  });
+  const bestLap = [...validForBest].sort((a, b) =>
     a.time.localeCompare(b.time),
   )[0];
   const lastLap = [...orderedLaps].sort(
