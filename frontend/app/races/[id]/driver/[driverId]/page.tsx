@@ -59,7 +59,10 @@ export default function DriverPage() {
 
   const sessionLaps = sessionLapsRaw.filter((l) => {
     if (activeTab === "QUALY") {
-      const noTime = !l.time || l.time.startsWith("00:00.000") || l.time.startsWith("0:00.000");
+      const noTime =
+        !l.time ||
+        l.time.startsWith("00:00.000") ||
+        l.time.startsWith("0:00.000");
       const noPos = !l.position || Number(l.position) === 0;
       if (noTime || noPos) return false;
     }
@@ -72,7 +75,9 @@ export default function DriverPage() {
   const bestLap = [...orderedLaps].sort((a, b) =>
     a.time.localeCompare(b.time),
   )[0];
-  const lastLap = [...orderedLaps].sort((a, b) => b.lap_number - a.lap_number)[0];
+  const lastLap = [...orderedLaps].sort(
+    (a, b) => b.lap_number - a.lap_number,
+  )[0];
 
   const rawChartData = sessionLaps
     .map((lap) => {
@@ -235,7 +240,7 @@ export default function DriverPage() {
               <p className="text-gray-400 text-xs uppercase font-bold tracking-wider mb-2">
                 LAPS
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-3">
                 {orderedLaps.map((lap) => (
                   <div
                     key={lap.id}
