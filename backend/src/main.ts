@@ -19,6 +19,10 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  const port = process.env.PORT || 3000;
+  await app.listen(port, '0.0.0.0');
+  // Startup log to help Railway healthchecks/debug
+  // eslint-disable-next-line no-console
+  console.log(`Server listening on http://0.0.0.0:${port}`);
 }
 bootstrap();

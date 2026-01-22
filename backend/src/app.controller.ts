@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Head } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -14,4 +14,7 @@ export class AppController {
   getHealth() {
     return { status: 'ok', timestamp: new Date().toISOString() };
   }
+
+  @Head('health')
+  headHealth(): void {}
 }
