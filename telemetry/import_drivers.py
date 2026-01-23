@@ -1,7 +1,8 @@
 import fastf1
 import requests
+import os
 
-API_URL = "https://pitwall-production.up.railway.app/drivers"
+API_URL = os.getenv("API_URL", "http://localhost:3000");
 fastf1.Cache.enable_cache('cache')
 
 DRIVER_COUNTRIES = {
@@ -59,7 +60,7 @@ print(f'\nEncontrados {len(all_drivers)} pilotos únicos. Importando...')
 for payload in all_drivers.values():
     abbr = payload.pop('abbr')
     try:
-        response = requests.post(API_URL, json=payload)
+        response = requests.post(f"{API_URL}/drivers", json=payload)
         if response.status_code == 201:
             print(f'Piloto {abbr} importado com sucesso!')
         else:

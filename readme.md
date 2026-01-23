@@ -1,188 +1,208 @@
 # PitWall
 
-Aplicação full‑stack para visualizar e explorar telemetria de Fórmula 1. O projeto é composto por:
+Aplicação full-stack para visualização e análise de telemetria de Fórmula 1.
 
-- Backend em NestJS (v11) com TypeORM e Swagger.
-- Frontend em Next.js (v16) App Router.
-- Pasta de telemetria com cache de sessões F1 organizada por ano/evento.
+## Sobre o Projeto
 
-## Visão Geral
+PitWall permite acompanhar corridas, qualificações, pilotos e voltas da F1 com gráficos detalhados e interface moderna.
 
-- **API**: expõe recursos (ex.: `drivers`) e documentação interativa em Swagger.
-- **Web App**: interface para consumo dos dados e visualizações.
-- **Telemetria**: arquivos `.ff1pkl` em `telemetry/cache/...` estruturados por ano, etapa e sessão.
+**Stack:**
+- Backend: NestJS + TypeORM + PostgreSQL
+- Frontend: Next.js 16.1.1 + React + Tailwind CSS
+- Telemetria: Python + FastF1
 
-## Arquitetura
+## Demonstrações
 
-```
-PitWall/
-├─ backend/
-│  ├─ src/
-│  │  ├─ driver/
-│  │  └─ main.ts
-│  ├─ test/
-│  └─ package.json
-├─ frontend/
-│  ├─ app/
-│  └─ package.json
-└─ telemetry/
-```
+![Demonstração do PitWall](assets/Pitwall.gif)
 
-## Pré‑requisitos
+![Demonstração de uma corrida](assets/Miami_PitWall.png)
 
-- Node.js 18+ (recomendado LTS) e npm.
-- Banco PostgreSQL (se for usar TypeORM/DB; configurar via env).
-- Windows (ambiente atual), mas funciona em macOS/Linux.
+## Pré-requisitos
 
-## Configuração
+- Node.js 18+
+- PostgreSQL 15+ (ou Docker)
+- Python 3.8+ (opcional, para importação de dados)
 
-1. Instale dependências:
+## Instalação e Execução
+
+### 1. Clone e instale dependências
 
 ```bash
+git clone https://github.com/PauloHenriqueJunio/PitWall.git
+cd PitWall
+
+# Backend
 cd backend
 npm install
 
+# Frontend
 cd ../frontend
 npm install
 ```
 
-2. Variáveis de ambiente (exemplos):
+### 2. Configure o banco de dados
 
-Crie `.env` no `backend/` conforme sua infra de banco:
+**Opção A: Docker (Recomendado)**
+```bash
 
+docker-compose up -d
+```
+Isso inicia PostgreSQL (porta 5432) e PgAdmin (porta 8080).
+
+**Opção B: PostgreSQL local**
+Configure sua instância e ajuste o `.env`.
+
+### 3. Configure variáveis de ambiente
+
+**Backend** (`backend/.env`):
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=pitwall
-DB_PASSWORD=pitwall
-DB_NAME=pitwall
-# PORT opcional (default 3000)
+DB_USER=admin
+DB_PASSWORD=admin_password # Altere isso em produção!
+DB_NAME=pitwall_db
 PORT=3000
 ```
 
-No `frontend/`, se precisar apontar para a API:
-
+**Frontend** (`frontend/.env.local`):
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-3. Telemetria (opcional):
+### 4. Execute o projeto
 
-- Os dados em `telemetry/cache/<ano>/<evento>/<sessão>/` são arquivos `.ff1pkl` (pickle) contendo car data, timing, positions, etc.
-- A aplicação básica roda sem eles; ingestão/visualização podem ser adicionadas conforme evolução do projeto.
-
-## Executando
-
-Backend (NestJS):
-
+**Backend:**
 ```bash
 cd backend
 npm run start:dev
 ```
+API: `http://localhost:3000` | Swagger: `http://localhost:3000/api`
 
-- API escuta em `http://localhost:3000` (default).
-- Swagger: `http://localhost:3000/api`.
-
-Frontend (Next.js):
-
+**Frontend:**
 ```bash
 cd frontend
 npm run dev
 ```
+App: `http://localhost:3001`
 
-Por padrão o Next usa porta 3000. Para evitar conflito com o backend, execute em outra porta ou ele íra colocar na porta 3001.
+## Funcionalidades
 
-```bash
-npm run dev -- -p 3001
-```
+- **Calendário de Corridas**: Visualize todas as corridas da temporada
+- **Detalhes de Corridas**: Resultados de corrida e qualificação com alternância entre modos
+- **Análise de Pilotos**: Gráficos de tempo por volta e estatísticas detalhadas
+- **API REST**: CRUD completo para drivers, races e laps
+- **Importação de Dados**: Scripts Python para importar dados via FastF1
 
-Build e produção:
+## API REST
 
-```bash
-cd backend
-npm run build
-npm run start:prod
+### Endpoints Principais
 
-cd ../frontend
-npm run build
-npm run start
-```
+**Drivers:**
+- `GET /drivers` - Lista todos os pilotos
+- `GET /drivers/:id` - Obtém um piloto
+- `POST /drivers` - Cria um piloto
+- `PATCH /drivers/:id` - Atualiza um piloto
+- `DELETE /drivers/:id` - Remove um piloto
 
-## API: Drivers
+**Races:**
+- `GET /races` - Lista todas as corridas
+- `GET /races/:id` - Obtém uma corrida
+- `POST /races` - Cria uma corrida
+- `PATCH /races/:id` - Atualiza uma corrida
+- `DELETE /races/:id` - Remove uma corrida
 
-Base: `http://localhost:3000/drivers`
+**Laps:**
+- `GET /laps` - Lista todas as voltas
+- `GET /laps/:id` - Obtém uma volta
+- `POST /laps` - Registra uma volta
+- `PATCH /laps/:id` - Atualiza uma volta
+- `DELETE /laps/:id` - Remove uma volta
 
-- `GET /drivers` — lista todos os pilotos.
-- `GET /drivers/:id` — obtém um piloto.
-- `POST /drivers` — cria um piloto.
-- `PATCH /drivers/:id` — atualiza um piloto.
-- `DELETE /drivers/:id` — remove um piloto.
+**Documentação completa:** `http://localhost:3000/api` (Swagger)
 
-Exemplo `POST /drivers`:
+## Importação de Dados
 
-```json
-{
-  "name": "Max Verstappen",
-  "team": "Red Bull Racing",
-  "number": 1,
-  "country": "Netherlands"
-}
-```
-
-Modelo (`Driver`):
-
-```ts
-id: number
-name: string
-team: string
-number: number
-country?: string
-```
-
-Documentação interativa: `http://localhost:3000/api`
-
-## Scripts úteis
-
-Backend (`backend/package.json`):
-
-- `start` / `start:dev` / `start:prod`
-- `build`, `lint`, `format`
-- `test`, `test:e2e`, `test:cov`
-
-Frontend (`frontend/package.json`):
-
-- `dev`, `build`, `start`, `lint`
-
-## Testes
-
-Backend (Jest):
+Scripts Python para importar dados reais da F1:
 
 ```bash
-cd backend
-npm run test
-npm run test:e2e
-npm run test:cov
+cd telemetry
+
+# Importar pilotos
+python import_drivers.py
+
+# Importar calendário
+python import_calendar.py
+
+# Importar todas as voltas de todas as corridas (QUALY & RACE)
+python import_season.py
 ```
 
-Frontend (lint):
+Requer: `pip install fastf1 pandas requests`
+
+## Tecnologias
+
+**Backend:** NestJS, TypeORM, PostgreSQL, Swagger
+
+**Frontend:** Next.js 16.1.1, React 19, TypeScript, Tailwind CSS, Recharts
+
+**Telemetria:** FastF1, Python
+
+**DevOps:** Docker, Docker Compose
+
+## Scripts Úteis
 
 ```bash
-cd frontend
-npm run lint
+# Backend
+npm run start:dev    # Desenvolvimento
+npm run build        # Build
+npm run start:prod   # Produção
+npm run test         # Testes
+
+# Frontend
+npm run dev          # Desenvolvimento
+npm run build        # Build
+npm run start        # Produção
 ```
 
-## Desenvolvimento
+## Estrutura do Projeto
 
-- Padrões de código: ESLint + Prettier em ambos os projetos.
-- Documentação da API via Swagger configurada em `backend/src/main.ts`.
-- Módulos adicionais podem seguir o padrão do módulo `driver` (controller, service, dto, entity).
+```
+PitWall/
+├─ backend/          # API NestJS
+│  └─ src/
+│     ├─ driver/     # Módulo de pilotos
+│     ├─ races/      # Módulo de corridas
+│     └─ laps/       # Módulo de voltas
+├─ frontend/         # App Next.js
+│  └─ app/
+│     ├─ page.tsx               # Calendário
+│     └─ races/[id]/
+│        ├─ page.tsx            # Detalhes da corrida
+│        └─ driver/[driverId]/
+│           └─ page.tsx         # Análise do piloto
+├─ telemetry/        # Scripts Python
+└─ docker-compose.yaml
+```
 
-## Próximos Passos
+## Contribuindo
 
-- Ingestão dos arquivos de telemetria `.ff1pkl` e mapeamento para entidades.
-- Visualizações avançadas (mapa de posições, gráficos de tempo, status de pista, clima).
-- Autenticação/autorização se for expor dashboards restritos.
+1. Fork o projeto
+2. Crie uma branch (`git checkout -b feature/NovaFeature`)
+3. Commit suas mudanças (`git commit -m 'Add NovaFeature'`)
+4. Push para a branch (`git push origin feature/NovaFeature`)
+5. Abra um Pull Request
+
+## Licença
+
+Copyright © 2026 Paulo Henrique Junio.
+Todos os direitos reservados.
+
+Este projeto é de uso exclusivo para fins de portfólio e aprendizado. A cópia, redistribuição ou uso comercial deste código sem autorização expressa do autor é proibida.
+
+## Autor
+
+Mantido e desenvolvido por [Paulo Henrique Junio](https://github.com/PauloHenriqueJunio)
 
 ---
 
-Mantido por PauloHenriqueJunio. Contribuições são bem‑vindas!
+**Desenvolvido para fãs de Fórmula 1**
