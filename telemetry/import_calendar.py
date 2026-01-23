@@ -2,7 +2,7 @@ import fastf1
 import requests
 import os
 
-API_URL = os.getenv("API_URL", "http://localhost:3000");
+API_URL = os.getenv("API_URL", "http://localhost:3000/races");
 
 YEAR = 2025;
 
@@ -23,7 +23,7 @@ for i, row in schedule.iterrows():
             "year": int(row['EventDate'].year)
         }
 
-        response = requests.post(API_URL, json=payload);
+        response = requests.post(f"{API_URL}/races", json=payload);
 
         if response.status_code == 201:
             print(f"{row['EventName']} adicionada!")
