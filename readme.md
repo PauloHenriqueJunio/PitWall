@@ -59,7 +59,7 @@ Configure sua instância e ajuste o `.env`.
 DB_HOST=localhost
 DB_PORT=5432
 DB_USER=admin
-DB_PASSWORD=admin_password
+DB_PASSWORD=admin_password # Altere isso em produção!
 DB_NAME=pitwall_db
 PORT=3000
 ```
