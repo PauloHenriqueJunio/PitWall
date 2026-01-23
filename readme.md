@@ -11,9 +11,11 @@ PitWall permite acompanhar corridas, qualificações, pilotos e voltas da F1 com
 - Frontend: Next.js 15 + React + Tailwind CSS
 - Telemetria: Python + FastF1
 
-## Screenshots
+## Demonstrações
 
-<!-- Adicione aqui GIFs e imagens do site funcionando -->
+![Demonstração do PitWall](assets/Pitwall.gif)
+
+![Demonstração de uma corrida](assets/Miami_PitWall.png)
 
 ## Pré-requisitos
 
@@ -42,7 +44,7 @@ npm install
 
 **Opção A: Docker (Recomendado)**
 ```bash
-# Na raiz do projeto
+
 docker-compose up -d
 ```
 Isso inicia PostgreSQL (porta 5432) e PgAdmin (porta 8080).
@@ -130,6 +132,9 @@ python import_drivers.py
 
 # Importar calendário
 python import_calendar.py
+
+# Importar todas as voltas de todas as corridas (QUALY & RACE)
+python import_season.py
 ```
 
 Requer: `pip install fastf1 requests`
@@ -189,7 +194,7 @@ PitWall/
 
 ## Licença
 
-Mantido por [PauloHenriqueJunio](https://github.com/PauloHenriqueJunio)
+Mantido e desenvolvido por [Paulo Henrique Junio](https://github.com/PauloHenriqueJunio)
 
 ---
 
