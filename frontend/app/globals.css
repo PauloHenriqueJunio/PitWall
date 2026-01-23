@@ -19,6 +19,33 @@
   }
 }
 
+@keyframes steering {
+  0% {
+    transform: rotate(-15deg);
+  }
+  15% {
+    transform: rotate(8deg);
+  }
+  30% {
+    transform: rotate(-22deg);
+  }
+  45% {
+    transform: rotate(18deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  75% {
+    transform: rotate(25deg);
+  }
+  90% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(-15deg);
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

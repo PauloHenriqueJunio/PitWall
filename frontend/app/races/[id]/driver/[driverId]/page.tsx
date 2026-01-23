@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import {
@@ -86,6 +87,25 @@ export default function DriverPage() {
       (typeof l.race === "number" ? l.race : l.race?.id) || l.raceId;
     return String(lapRaceId) === String(id);
   });
+
+  if (!driver) {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex flex-col justify-center items-center gap-4">
+        <div className="relative w-32 h-32">
+          <Image
+            src="/steering-wheel.png"
+            alt="Carregando"
+            fill
+            sizes="128px"
+            className="animate-[steering_2s_ease-in-out_infinite]"
+          />
+        </div>
+        <p className="text-red-600 font-mono font-bold animate-pulse text-xl">
+          Carregando dados do piloto, por favor aguarde...
+        </p>
+      </div>
+    );
+  }
 
   const sessionLaps = sessionLapsRaw.filter((l) => {
     const isInvalid =

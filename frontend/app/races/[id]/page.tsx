@@ -4,6 +4,7 @@ import { act, useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 
 const TEAM_COLORS: Record<string, string> = {
   "Red Bull Racing": "#3671C6",
@@ -52,6 +53,7 @@ export default function RacePage() {
   const params = useParams();
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [race, setRace] = useState<Race | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"RACE" | "QUALY">("RACE");
   const formatTime = (time: string | undefined) => {
     if (!time) return "No Time";
@@ -59,27 +61,30 @@ export default function RacePage() {
   };
 
   useEffect(() => {
-    axios
-      .get<Race[]>(`${API_URL}/races`)
-      .then((response) => {
-        const currentRace = response.data.find(
-          (r) => r.id === Number(params.id),
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const [racesResponse, driversResponse] = await Promise.all([
+          axios.get<Race[]>(`${API_URL}/races`),
+          axios.get<Driver[]>(`${API_URL}/drivers`)
+        ]);
+
+        const currentRace = racesResponse.data.find(
+          (r) => r.id === Number(params.id)
         );
         setRace(currentRace || null);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar corrida", error);
-      });
 
-    axios
-      .get<Driver[]>(`${API_URL}/drivers`)
-      .then((response) => {
-        setDrivers(response.data);
-      })
-      .catch((error) => {
-        console.error("Erro ao buscar pilotos", error);
-      });
-  }, []);
+        setDrivers(driversResponse.data);
+
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [params.id]);
 
   const getProcessedDrivers = () => {
     const processed = drivers.map((driver) => {
@@ -134,6 +139,24 @@ export default function RacePage() {
         };
       });
   };
+  if (isLoading || !race) {
+    return (
+      <div className="min-h-screen bg-neutral-950 flex flex-col justify-center items-center gap-4">
+        <div className="relative w-32 h-32">
+            <Image 
+              src="/bandeira.gif"
+              alt="Carregando"
+              fill
+              unoptimized={true}
+              className=""
+            />
+        </div>
+        <p className="text-red-600 font-mono font-bold tracking-[0.2em] animate-pulse text-xl">
+          Carregando o grid de largada, por favor aguarde...
+        </p>
+      </div>
+    );
+  }
 
   const sortedDrivers = getProcessedDrivers();
 
