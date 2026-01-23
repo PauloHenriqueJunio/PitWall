@@ -8,7 +8,7 @@ PitWall permite acompanhar corridas, qualificações, pilotos e voltas da F1 com
 
 **Stack:**
 - Backend: NestJS + TypeORM + PostgreSQL
-- Frontend: Next.js 15 + React + Tailwind CSS
+- Frontend: Next.js 16.1.1 + React + Tailwind CSS
 - Telemetria: Python + FastF1
 
 ## Demonstrações
@@ -137,13 +137,13 @@ python import_calendar.py
 python import_season.py
 ```
 
-Requer: `pip install fastf1 requests`
+Requer: `pip install fastf1 pandas requests`
 
 ## Tecnologias
 
 **Backend:** NestJS, TypeORM, PostgreSQL, Swagger
 
-**Frontend:** Next.js 15, React 19, TypeScript, Tailwind CSS, Recharts
+**Frontend:** Next.js 16.1.1, React 19, TypeScript, Tailwind CSS, Recharts
 
 **Telemetria:** FastF1, Python
 
@@ -193,6 +193,13 @@ PitWall/
 5. Abra um Pull Request
 
 ## Licença
+
+Copyright © 2026 Paulo Henrique Junio.
+Todos os direitos reservados.
+
+Este projeto é de uso exclusivo para fins de portfólio e aprendizado. A cópia, redistribuição ou uso comercial deste código sem autorização expressa do autor é proibida.
+
+## Autor
 
 Mantido e desenvolvido por [Paulo Henrique Junio](https://github.com/PauloHenriqueJunio)
 
