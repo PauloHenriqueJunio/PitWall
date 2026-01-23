@@ -1,26 +1,26 @@
-# 🏎️ PitWall
+# PitWall
 
 **PitWall** é uma aplicação full-stack completa para visualização e análise de telemetria de Fórmula 1. O sistema permite acompanhar corridas, qualificações, pilotos e voltas em tempo real, com gráficos detalhados e interface moderna inspirada no visual da F1.
 
-## 📋 Índice
+## Índice
 
-- [Visão Geral](#-visão-geral)
-- [Funcionalidades](#-funcionalidades)
-- [Arquitetura](#-arquitetura)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
-- [Executando o Projeto](#-executando-o-projeto)
-- [API REST](#-api-rest)
-- [Frontend - Interface Web](#-frontend---interface-web)
-- [Telemetria e Importação de Dados](#-telemetria-e-importação-de-dados)
-- [Docker](#-docker)
-- [Scripts Úteis](#-scripts-úteis)
-- [Testes](#-testes)
-- [Desenvolvimento](#-desenvolvimento)
-- [Tecnologias](#-tecnologias)
-- [Contribuindo](#-contribuindo)
+- [Visão Geral](#visão-geral)
+- [Funcionalidades](#funcionalidades)
+- [Arquitetura](#arquitetura)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Executando o Projeto](#executando-o-projeto)
+- [API REST](#api-rest)
+- [Frontend - Interface Web](#frontend---interface-web)
+- [Telemetria e Importação de Dados](#telemetria-e-importação-de-dados)
+- [Docker](#docker)
+- [Scripts Úteis](#scripts-úteis)
+- [Testes](#testes)
+- [Desenvolvimento](#desenvolvimento)
+- [Tecnologias](#tecnologias)
+- [Contribuindo](#contribuindo)
 
-## 🎯 Visão Geral
+## Visão Geral
 
 PitWall é uma plataforma completa que combina:
 
@@ -30,15 +30,15 @@ PitWall é uma plataforma completa que combina:
 - **Visualizações avançadas** com gráficos interativos usando Recharts
 - **Banco de dados PostgreSQL** para armazenamento de dados estruturados
 
-## ✨ Funcionalidades
+## Funcionalidades
 
-### 🏁 Calendário de Corridas
+### Calendário de Corridas
 - Visualização completa do calendário da temporada
 - Listagem de todas as corridas com data, localização e rodada
 - Navegação rápida para detalhes de cada GP
 - Design inspirado no visual oficial da F1
 
-### 🏆 Detalhes de Corridas
+### Detalhes de Corridas
 - Visualização de resultados de corrida e qualificação
 - Alternância entre modos RACE e QUALIFYING
 - Classificação automática baseada em:
@@ -50,7 +50,7 @@ PitWall é uma plataforma completa que combina:
   - DNF (Did Not Finish)
 - Cores das equipes para fácil identificação
 
-### 👨‍🏁 Análise de Pilotos
+### Análise de Pilotos
 - Página dedicada para cada piloto em cada corrida
 - Gráfico de evolução de tempo por volta
 - Estatísticas detalhadas:
@@ -61,7 +61,7 @@ PitWall é uma plataforma completa que combina:
 - Visualização de todas as voltas com tempo e posição
 - Alternância entre dados de corrida e qualificação
 
-### 📊 API REST Completa
+### API REST Completa
 
 #### Pilotos (Drivers)
 - Gerenciamento completo de pilotos (CRUD)
@@ -79,7 +79,7 @@ PitWall é uma plataforma completa que combina:
 - Tipo de sessão (RACE/QUALY)
 - Relacionamento com piloto e corrida
 
-### 🔄 Importação de Dados
+### Importação de Dados
 
 #### Scripts Python com FastF1
 - `import_drivers.py`: Importa pilotos automaticamente
@@ -87,14 +87,14 @@ PitWall é uma plataforma completa que combina:
 - `import_season.py`: Importação completa de dados da temporada
 - Integração direta com a API do backend
 
-### 📈 Visualizações e Gráficos
+### Visualizações e Gráficos
 - Gráfico de linha mostrando evolução de tempo por volta
 - Sistema de tooltip interativo
 - Domínio automático do eixo Y para melhor visualização
 - Animações suaves e responsivas
 - Tratamento de dados inválidos
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
 PitWall/
@@ -146,7 +146,7 @@ PitWall/
 └─ package.json               # Dependências root
 ```
 
-## 🔧 Pré-requisitos
+## Pré-requisitos
 
 - **Node.js** 18+ (recomendado LTS)
 - **npm** ou **yarn**
@@ -159,7 +159,7 @@ PitWall/
 pip install fastf1 requests
 ```
 
-## 📦 Instalação
+## Instalação
 
 ### 1. Clone o repositório
 ```bash
@@ -213,7 +213,7 @@ PORT=3000
 NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-## 🚀 Executando o Projeto
+## Executando o Projeto
 
 ### Backend (API NestJS)
 ```bash
@@ -246,7 +246,7 @@ npm run build
 npm run start
 ```
 
-## 🔌 API REST
+## API REST
 
 ### Base URL
 ```
@@ -258,7 +258,7 @@ Acesse `http://localhost:3000/api` para explorar todos os endpoints via Swagger 
 
 ### Endpoints Principais
 
-#### 👨‍🏁 Drivers (Pilotos)
+#### Drivers (Pilotos)
 
 **GET** `/drivers` - Lista todos os pilotos
 ```json
@@ -292,7 +292,7 @@ Acesse `http://localhost:3000/api` para explorar todos os endpoints via Swagger 
 
 ---
 
-#### 🏁 Races (Corridas)
+#### Races (Corridas)
 
 **GET** `/races` - Lista todas as corridas
 ```json
@@ -328,7 +328,7 @@ Acesse `http://localhost:3000/api` para explorar todos os endpoints via Swagger 
 
 ---
 
-#### 🔄 Laps (Voltas)
+#### Laps (Voltas)
 
 **GET** `/laps` - Lista todas as voltas
 ```json
@@ -410,7 +410,7 @@ Acesse `http://localhost:3000/api` para explorar todos os endpoints via Swagger 
 }
 ```
 
-## 🎨 Frontend - Interface Web
+## Frontend - Interface Web
 
 ### Páginas Disponíveis
 
@@ -466,7 +466,7 @@ Dashboard completo para análise de performance:
 - Animação de volante girando para dados de piloto
 - Mensagens personalizadas em português
 
-## 📡 Telemetria e Importação de Dados
+## Telemetria e Importação de Dados
 
 ### Scripts Python disponíveis
 
@@ -509,7 +509,7 @@ Os scripts utilizam a biblioteca FastF1 para:
 - Parsing de sessões (qualificação, corrida, treinos)
 - Extração de dados de voltas, setores e posições
 
-## 🐳 Docker
+## Docker
 
 ### Serviços Disponíveis
 
@@ -549,7 +549,7 @@ docker-compose down
 docker-compose down -v
 ```
 
-## 🛠️ Scripts Úteis
+## Scripts Úteis
 
 ### Backend
 
@@ -591,7 +591,7 @@ npm run start
 npm run lint
 ```
 
-## 🧪 Testes
+## Testes
 
 ### Backend (Jest)
 
@@ -617,7 +617,7 @@ cd frontend
 npm run lint
 ```
 
-## 💻 Desenvolvimento
+## Desenvolvimento
 
 ### Padrões de Código
 
@@ -665,7 +665,7 @@ nest generate resource module-name
 4. Configure controller com decoradores Swagger
 5. Adicione no `app.module.ts`
 
-## 🔧 Tecnologias
+## Tecnologias
 
 ### Backend
 - **NestJS** 11 - Framework Node.js
@@ -691,7 +691,7 @@ nest generate resource module-name
 - **Docker** - Containerização
 - **Docker Compose** - Orquestração de containers
 
-## 🤝 Contribuindo
+## Contribuindo
 
 Contribuições são bem-vindas! Para contribuir:
 
@@ -703,25 +703,25 @@ Contribuições são bem-vindas! Para contribuir:
 
 ### Ideias para Futuras Features
 
-- 🔐 Autenticação e autorização de usuários
-- 📊 Dashboard de estatísticas da temporada
-- 🏁 Visualização de mapa de circuito com posições em tempo real
-- 🌦️ Informações de clima e condições de pista
-- 📈 Comparação entre pilotos
-- 🎯 Sistema de predição de resultados
-- 📱 Progressive Web App (PWA)
-- 🔔 Notificações em tempo real
-- 🎨 Temas personalizáveis
-- 🌍 Internacionalização (i18n)
+- Autenticação e autorização de usuários
+- Dashboard de estatísticas da temporada
+- Visualização de mapa de circuito com posições em tempo real
+- Informações de clima e condições de pista
+- Comparação entre pilotos
+- Sistema de predição de resultados
+- Progressive Web App (PWA)
+- Notificações em tempo real
+- Temas personalizáveis
+- Internacionalização (i18n)
 
-## 📝 Licença
+## Licença
 
 Este projeto é mantido por [PauloHenriqueJunio](https://github.com/PauloHenriqueJunio).
 
-## 📞 Suporte
+## Suporte
 
 Para questões e suporte, abra uma [issue no GitHub](https://github.com/PauloHenriqueJunio/PitWall/issues).
 
 ---
 
-**Desenvolvido com ❤️ para fãs de Fórmula 1**
+**Desenvolvido para fãs de Fórmula 1**
