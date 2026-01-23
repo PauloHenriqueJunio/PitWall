@@ -1,7 +1,8 @@
 import fastf1 
 import requests
+import os
 
-API_URL = "https://pitwall-production.up.railway.app/races";
+API_URL = os.getenv("API_URL", "http://localhost:3000");
 
 YEAR = 2025;
 

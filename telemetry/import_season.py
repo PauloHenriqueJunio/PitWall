@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed;
 from threading import Lock;
 
 
-API_URL = "https://pitwall-production.up.railway.app";
+API_URL = os.getenv("API_URL", "http://localhost:3000");
 DATA_YEAR = 2025;
 MAX_WORKERS = 5;
 fastf1.Cache.enable_cache('cache');
