@@ -66,16 +66,15 @@ export default function RacePage() {
       try {
         const [racesResponse, driversResponse] = await Promise.all([
           axios.get<Race[]>(`${API_URL}/races`),
-          axios.get<Driver[]>(`${API_URL}/drivers`)
+          axios.get<Driver[]>(`${API_URL}/drivers`),
         ]);
 
         const currentRace = racesResponse.data.find(
-          (r) => r.id === Number(params.id)
+          (r) => r.id === Number(params.id),
         );
         setRace(currentRace || null);
 
         setDrivers(driversResponse.data);
-
       } catch (error) {
         console.error("Erro ao carregar dados:", error);
       } finally {
@@ -143,13 +142,13 @@ export default function RacePage() {
     return (
       <div className="min-h-screen bg-neutral-950 flex flex-col justify-center items-center gap-4">
         <div className="relative w-32 h-32">
-            <Image 
-              src="/bandeira.gif"
-              alt="Carregando"
-              fill
-              unoptimized={true}
-              className=""
-            />
+          <Image
+            src="/bandeira.gif"
+            alt="Carregando"
+            fill
+            unoptimized={true}
+            className=""
+          />
         </div>
         <p className="text-red-600 font-mono font-bold tracking-[0.2em] animate-pulse text-xl">
           Carregando o grid de largada, por favor aguarde...
@@ -161,7 +160,7 @@ export default function RacePage() {
   const sortedDrivers = getProcessedDrivers();
 
   return (
-    <main className="min-h-screen bg-neutral-950 text-white p-10 font-sans">
+    <main className="min-h-screen bg-neutral-950 text-white p-4 md:p-10 font-sans overflow-x-hidden">
       <Link
         href="/"
         className="text-gray-400 hover:text-white mb-8 inline-block"
@@ -177,7 +176,7 @@ export default function RacePage() {
         <div className="mt-8 flex justify-center gap-4">
           <button
             onClick={() => setActiveTab("RACE")}
-            className={`px-8 py-2 rounded-full font-bold uppercase trackin-wider transition-all border 
+            className={`px-8 py-2 rounded-full font-bold uppercase tracking-wider transition-all border 
             ${
               activeTab === "RACE"
                 ? "bg-red-600 border-red-600 text-white shadow-lg shadow-red-900/50"
@@ -205,10 +204,10 @@ export default function RacePage() {
           <Link
             key={driver.id}
             href={`/races/${String(params.id)}/driver/${driver.id}`}
-            className="group block"
+            className="group block w-full"
           >
             <div
-              className={`flex items-center bg-neutral-900 border-l-4 border-transparent p-4 rounded transition-all cursor-pointer hover:bg-neutral-800 ${
+              className={`relative overflow-hidden flex flex-col gap-4 md:flex-row md:items-center justify-between bg-neutral-900 border-l-4 border-transparent p-4 rounded transition-all cursor-pointer hover:bg-neutral-800 ${
                 driver.isDNS
                   ? "bg-neutral-950 border-gray-800 opacity-40 hover:opacity-100"
                   : driver.isDNF
@@ -222,76 +221,80 @@ export default function RacePage() {
                     : undefined,
               }}
             >
-              <div
-                className={`w-16 text-center text-3xl font-black text-gray-600 group-hover:text-white italic ${
-                  driver.isDNF
-                    ? "text-red-900"
-                    : "text-gray-600 group-hover:text-white"
-                }`}
-              >
-                {index + 1}
-              </div>
-
-              <div className="flex-1 pl-4 border-l border-gray-800">
-                <div className="flex items-baseline gap-3">
-                  <h2
-                    className={`text-xl font-bold text-white group-hover:text-red-500 transition-colors ${
-                      driver.isDNF
-                        ? "text-gray-500"
-                        : "text-white group-hover:text-red-500"
-                    }`}
-                  >
-                    {driver.name}
-                  </h2>
-                  <span className="text-sm text-gray-500 font-mono">
-                    #{driver.number}
-                  </span>
-                </div>
-                <p
-                  className="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1"
-                  style={{
-                    color:
-                      !driver.isDNS && !driver.isDNF
-                        ? getTeamColor(driver.team)
-                        : "#9ca3af",
-                  }}
+              <div className="flex items-center flex-1 min-w-0 mr-4">
+                <div
+                  className={`w-12 shrink-0 text-center text-3xl font-black italic ${
+                    driver.isDNF
+                      ? "text-red-900"
+                      : "text-gray-600 group-hover:text-white"
+                  }`}
                 >
-                  {driver.team}
-                </p>
+                  {index + 1}
+                </div>
+
+                <div className="pl-4 border-l border-gray-800 flex-1 min-w-0">
+                  <div className="flex flex-col md:flex-row md:items-baseline md:gap-2">
+                    <h2
+                      className={`text-xl font-bold leading-tight transition-colors ${
+                        driver.isDNF
+                          ? "text-gray-500"
+                          : "text-white group-hover:text-red-500"
+                      }`}
+                    >
+                      {driver.name}
+                    </h2>
+                    <span className="text-sm text-gray-500 font-mono shrink-0">
+                      #{driver.number}
+                    </span>
+                  </div>
+                  <p
+                    className="text-xs text-gray-400 uppercase font-bold tracking-wider mt-1 md:truncate leading-tight"
+                    style={{
+                      color:
+                        !driver.isDNS && !driver.isDNF
+                          ? getTeamColor(driver.team)
+                          : "#9ca3af",
+                    }}
+                  >
+                    {driver.team}
+                  </p>
+                </div>
               </div>
 
-              <div className="text-right px-4">
-                <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">
-                  {activeTab === "RACE" ? "LAPS COMPLETED" : "FASTEST LAP"}
-                </p>
-                <p className="text-xl font-mono font-bold text-white">
-                  {activeTab === "RACE" ? (
-                    <>
-                      {driver.isDNS ? (
-                        <span className="text-gray-600">DNS</span>
-                      ) : (
-                        <span
-                          className={
-                            driver.isDNF ? "text-red-600" : "text-yellow-500"
-                          }
-                        >
-                          {driver.sessionLaps.length}
-                          {driver.isDNF && (
-                            <span className="text-xs ml-1 font-sans font-bold">
-                              (DNF)
-                            </span>
-                          )}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <span className="text-purple-400">
-                      {formatTime(driver.bestLap?.time)}
-                    </span>
-                  )}
-                </p>
+              <div className="flex items-center justify-end w-full md:w-auto md:justify-start gap-4 shrink-0">
+                <div className="text-right">
+                  <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest whitespace-nowrap">
+                    {activeTab === "RACE" ? "LAPS COMPLETED" : "FASTEST LAP"}
+                  </p>
+                  <p className="text-xl font-mono font-bold text-white">
+                    {activeTab === "RACE" ? (
+                      <>
+                        {driver.isDNS ? (
+                          <span className="text-gray-600">DNS</span>
+                        ) : (
+                          <span
+                            className={
+                              driver.isDNF ? "text-red-600" : "text-yellow-500"
+                            }
+                          >
+                            {driver.sessionLaps.length}
+                            {driver.isDNF && (
+                              <span className="text-xs ml-1 font-sans font-bold">
+                                (DNF)
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </>
+                    ) : (
+                      <span className="text-purple-400">
+                        {formatTime(driver.bestLap?.time)}
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <div className="text-gray-600 group-hover:text-white">→</div>
               </div>
-              <div className="text-gray-600 group-hover:text-white pl-4">→</div>
             </div>
           </Link>
         ))}
