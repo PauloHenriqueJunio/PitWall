@@ -233,7 +233,7 @@ export default function RacePage() {
                 </div>
 
                 <div className="pl-4 border-l border-gray-800 flex-1 min-w-0">
-                  <div className="flex flex-col md:flex-row  md:items-baseline md:gap-2">
+                  <div className="flex flex-col md:flex-row md:items-baseline md:gap-2">
                     <h2
                       className={`text-xl font-bold leading-tight transition-colors ${
                         driver.isDNF
