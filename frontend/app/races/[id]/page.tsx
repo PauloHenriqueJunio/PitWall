@@ -5,6 +5,11 @@ import axios from "axios";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import {
+  parseLapTimeToSeconds,
+  isValidLap,
+  isSessionMatch,
+} from "@/utils/raceUtils";
 
 const TEAM_COLORS: Record<string, string> = {
   "Red Bull Racing": "#3671C6",
@@ -88,16 +93,18 @@ export default function RacePage() {
   const getProcessedDrivers = () => {
     const processed = drivers.map((driver) => {
       const laps = driver.laps ?? [];
-      const sessionLaps = laps.filter(
-        (l) =>
-          l.session_type === activeTab &&
-          l.race &&
-          l.race.id === Number(params.id),
-      );
+      const sessionLaps = laps.filter((l) => {
+        const isSameRace = l.race && l.race.id === Number(params.id);
+        if (!isSameRace) return false;
 
-      const bestLap = [...sessionLaps].sort((a, b) =>
-        a.time.localeCompare(b.time),
-      )[0];
+        return isSessionMatch(l.session_type, activeTab);
+      });
+      const bestLap = [...sessionLaps]
+        .filter((l) => isValidLap(l.time))
+        .sort((a, b) => {
+          return parseLapTimeToSeconds(a.time) - parseLapTimeToSeconds(b.time);
+        })[0];
+
       const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
       const finalPosition =
         lastLap && lastLap.position > 0 ? lastLap.position : 999;
@@ -122,7 +129,10 @@ export default function RacePage() {
         } else {
           if (!a.bestLap) return +1;
           if (!b.bestLap) return -1;
-          return a.bestLap.time.localeCompare(b.bestLap.time);
+          return (
+            parseLapTimeToSeconds(a.bestLap.time) -
+            parseLapTimeToSeconds(b.bestLap.time)
+          );
         }
       })
       .map((driver) => {
@@ -138,6 +148,7 @@ export default function RacePage() {
         };
       });
   };
+
   if (isLoading || !race) {
     return (
       <div className="min-h-screen bg-neutral-950 flex flex-col justify-center items-center gap-4">
