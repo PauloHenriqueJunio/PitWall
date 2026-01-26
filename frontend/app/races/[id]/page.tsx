@@ -88,16 +88,32 @@ export default function RacePage() {
   const getProcessedDrivers = () => {
     const processed = drivers.map((driver) => {
       const laps = driver.laps ?? [];
-      const sessionLaps = laps.filter(
-        (l) =>
-          l.session_type === activeTab &&
-          l.race &&
-          l.race.id === Number(params.id),
-      );
 
-      const bestLap = [...sessionLaps].sort((a, b) =>
-        a.time.localeCompare(b.time),
-      )[0];
+      const sessionLaps = laps.filter((l) => {
+        const isSameRace = l.race && l.race.id === Number(params.id);
+        if (!isSameRace) return false;
+
+        if (activeTab === "QUALY") {
+          return (
+            l.session_type === "QUALY" ||
+            l.session_type === "Qualifying" ||
+            (l.session_type && l.session_type.startsWith("Q"))
+          );
+        }
+
+        return l.session_type === "Race" || l.session_type === "RACE";
+      });
+
+      const bestLap = [...sessionLaps]
+        .filter(
+          (l) =>
+            l.time &&
+            l.time !== "00:00.000" &&
+            !l.time.startsWith("00:00:") &&
+            !l.time.startsWith("0 days 00:00"),
+        )
+        .sort((a, b) => a.time.localeCompare(b.time))[0];
+
       const lastLap = [...sessionLaps].sort((a, b) => b.id - a.id)[0];
       const finalPosition =
         lastLap && lastLap.position > 0 ? lastLap.position : 999;
@@ -120,6 +136,7 @@ export default function RacePage() {
           }
           return b.sessionLaps.length - a.sessionLaps.length;
         } else {
+          // Ordenação do Qualy
           if (!a.bestLap) return +1;
           if (!b.bestLap) return -1;
           return a.bestLap.time.localeCompare(b.bestLap.time);
@@ -138,6 +155,7 @@ export default function RacePage() {
         };
       });
   };
+
   if (isLoading || !race) {
     return (
       <div className="min-h-screen bg-neutral-950 flex flex-col justify-center items-center gap-4">
