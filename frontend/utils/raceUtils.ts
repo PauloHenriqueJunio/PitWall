@@ -1,5 +1,6 @@
 export const parseLapTimeToSeconds = (time: string | undefined): number => {
   if (!time) return Infinity;
+
   const cleanTime = time.replace("0 days ", "").trim();
 
   try {
@@ -16,6 +17,10 @@ export const parseLapTimeToSeconds = (time: string | undefined): number => {
     } else {
       return Infinity;
     }
+    if (Number.isNaN(seconds) || seconds <= 0) {
+      return Infinity;
+    }
+
     return seconds;
   } catch (e) {
     return Infinity;
@@ -24,10 +29,14 @@ export const parseLapTimeToSeconds = (time: string | undefined): number => {
 
 export const isValidLap = (time: string | undefined): boolean => {
   if (!time) return false;
-  if (time === "00:00.000") return false;
-  if (time.startsWith("00:00:")) return false;
-  if (time.startsWith("0 days 00:00")) return false;
   if (time === "NaN") return false;
+  if (time === "00:00.000") return false;
+  if (time === "00:00:00.000") return false;
+  if (time.startsWith("00:00:")) return false;
+  if (time.startsWith("00:00:00")) return false;
+  if (time.startsWith("0 days 00:00")) return false;
+  if (time.startsWith("0:")) return false;
+
   return true;
 };
 
