@@ -1,10 +1,17 @@
 # PitWall
 
-Aplicação full-stack para visualização e análise de telemetria de Fórmula 1.
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)'
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+
+Acesse o projeto online aqui: www.pitwall.dev.br
 
 ## Sobre o Projeto
 
-PitWall permite acompanhar corridas, qualificações, pilotos e voltas da F1 com gráficos detalhados e interface moderna.
+O PitWall é uma plataforma Full Stack de engenharia de dados focada em telemetria esportiva. O projeto resolve o desafio de processar grandes volumes de dados da F1 (FastF1 API) via Python, servindo-os através de uma API robusta em NestJS para um frontend de alta performance em Next.js (Server Components). O objetivo é demonstrar arquitetura limpa, dockerização e visualização de dados complexos.
 
 **Stack:**
 - Backend: NestJS + TypeORM + PostgreSQL
